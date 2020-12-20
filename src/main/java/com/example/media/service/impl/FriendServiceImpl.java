@@ -6,6 +6,8 @@ import com.example.media.service.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class FriendServiceImpl implements FriendService {
     @Autowired
@@ -16,7 +18,22 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
+    public void delete(FriendEntity friendEntity) {
+        friendRepository.delete(friendEntity);
+    }
+
+    @Override
     public Iterable<FriendEntity> findAll() {
         return friendRepository.findAll();
+    }
+
+    @Override
+    public Iterable<FriendEntity> findAllFriendById(Long id) {
+        return friendRepository.findAllFriendById(id);
+    }
+
+    @Override
+    public Optional<FriendEntity> findById(Long id) {
+        return friendRepository.findById(id);
     }
 }
