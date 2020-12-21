@@ -38,13 +38,24 @@ public class AdminController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PutMapping("/users/{id}")
-    public ResponseEntity<User> blockUser(@PathVariable Long id) {
+    @PutMapping("/users/{id}/block")
+    public ResponseEntity<User> blockUser(@PathVariable Long id, @RequestBody User user) {
         Optional<User> userOptional = this.userService.findById(id);
         if (!userOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         userOptional.get().setEnabled(false);
+        userService.save(userOptional.get());
+        return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
+    }
+
+    @PutMapping("/users/{id}/unblock")
+    public ResponseEntity<User> unblockUser(@PathVariable Long id, @RequestBody User user) {
+        Optional<User> userOptional = this.userService.findById(id);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        userOptional.get().setEnabled(true);
         userService.save(userOptional.get());
         return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
     }
