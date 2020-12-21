@@ -69,4 +69,13 @@ public class AdminController {
         userService.delete(userOptional.get());
         return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
     }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getById(@PathVariable Long id) {
+        Optional<User> userOptional = this.userService.findById(id);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
+    }
 }
