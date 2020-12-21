@@ -52,11 +52,6 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/users")
-    public ResponseEntity<Iterable<User>> getAll() {
-        Iterable<User> users = userService.findAll();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
 
     @PostMapping("/register")
     public ResponseEntity<User> create(@Valid @RequestBody User user, BindingResult bindingResult) {
