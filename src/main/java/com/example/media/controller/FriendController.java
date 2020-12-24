@@ -47,7 +47,9 @@ public class FriendController {
         List<User> listUserFriend2 = getListUserFriend(idUser2);
 
         for (User user1: listUserFriend1){
+            System.out.println(user1.getId() + "thàng 1");
             for (User user2:listUserFriend2){
+                System.out.println(user2.getId() + "thàng 2");
                 if (user1.getId() == user2.getId()){
                     listMutualFriend.add(user1);
                 }
@@ -61,6 +63,7 @@ public class FriendController {
         List<FriendEntity> listFriend = (List<FriendEntity>) friendService.findAllFriendById(idUser);
         List<User> listUser = new ArrayList<>();
         for (FriendEntity friendEntity: listFriend){
+            System.out.println("id bạn " + friendEntity.getId());
             if (friendEntity.getStatus() != 0){
                 User user = userService.findById(friendEntity.getIdUserFriend()).get();
                 listUser.add(user);
@@ -69,16 +72,13 @@ public class FriendController {
         return listUser;
     }
 
-    @PostMapping("/addFriend")
-    public ResponseEntity addFriend(@RequestBody Friend friend) {
-        User user = (userService.findById(friend.getIdUser())).isPresent() ?
-                userService.findById(friend.getIdUser()).get(): null;
-        FriendEntity friendEntity = new FriendEntity(friend.getCreateAt(),friend.getStatus(),user, friend.getIdUserFriend());
-        if (friendEntity != null){
-            friendService.save(friendEntity);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    @GetMapping("/addFriend/{idU1}/{idU2}")
+    public ResponseEntity addFriend(@PathVariable Long idU1,@PathVariable Long idU2) {
+      User user = userService.findById(idU1).get();
+        long millis=System.currentTimeMillis();
+        java.sql.Date date=new java.sql.Date(millis);
+        friendService.save(new FriendEntity(date,1,user,idU2));
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/acceptFriend/{idFriend}")
@@ -89,9 +89,10 @@ public class FriendController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/deleteFriend/{idFriend}")
-    public ResponseEntity deleteFriend(@PathVariable Long idFriend) {
-        FriendEntity friendEntity = friendService.findById(idFriend).get();
+    @DeleteMapping("/deleteFriend/{idU1}/{idU2}")
+    public ResponseEntity deleteFriend(@PathVariable Long idU1,@PathVariable Long idU2) {
+        FriendEntity friendEntity = friendService.findFriendByIdUser(idU1,idU2);
+        System.out.println(friendEntity.getId());
         friendService.delete(friendEntity);
         return new ResponseEntity<>(HttpStatus.OK);
     }

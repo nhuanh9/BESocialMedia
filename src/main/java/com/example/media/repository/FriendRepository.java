@@ -14,4 +14,9 @@ public interface FriendRepository extends JpaRepository<FriendEntity, Long> {
 
     @Query("SELECT f FROM FriendEntity f inner join  f.user u where u.id=:id")
     public List<FriendEntity> findAllFriendById(@Param("id") Long id);
+
+    @Query("SELECT f FROM FriendEntity f where f.id=:idF and f.idUserFriend=:idU")
+    public FriendEntity findFriendByIdUser(@Param("idF") Long idF,@Param("idU") Long idU);
+
+    public FriendEntity findByUserIdAndIdUserFriend(Long userId,Long idUserFriend);
 }
