@@ -36,4 +36,9 @@ public class FriendServiceImpl implements FriendService {
     public Optional<FriendEntity> findById(Long id) {
         return friendRepository.findById(id);
     }
+
+    @Override
+    public FriendEntity findFriendByIdUser(Long idF, Long idU) {
+        return friendRepository.findByUserIdAndIdUserFriend(idF,idU);
+    }
 }
