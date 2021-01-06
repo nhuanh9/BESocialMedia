@@ -54,7 +54,6 @@ public class PostController {
         postEntity.setUser(user);
         postEntity.setImg(img.getOriginalFilename());
         postService.savePost(postEntity);
-
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
