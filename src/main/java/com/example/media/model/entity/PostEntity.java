@@ -4,6 +4,8 @@ import com.example.media.model.User;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "post")
@@ -18,25 +20,55 @@ public class PostEntity {
     @Column(nullable = false)
     private int status;
 
-    @Column(nullable = true)
     private String notification;
 
-    @Column(nullable = true)
-    private String img;
+    private String content;
+
+    private Long postIdShear;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<ImgEntity> imgs = new ArrayList<>();
+
     public PostEntity() {
     }
 
-    public PostEntity(Date createAt, int status, String notification, String img, User user) {
+    public PostEntity(Long id, Date createAt, int status, String notification, String content, Long postIdShear, User user, List<ImgEntity> imgs) {
+        this.id = id;
         this.createAt = createAt;
         this.status = status;
         this.notification = notification;
-        this.img = img;
+        this.content = content;
+        this.postIdShear = postIdShear;
         this.user = user;
+        this.imgs = imgs;
+    }
+
+    public List<ImgEntity> getImgs() {
+        return imgs;
+    }
+
+    public void setImgs(List<ImgEntity> imgs) {
+        this.imgs = imgs;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Long getPostIdShear() {
+        return postIdShear;
+    }
+
+    public void setPostIdShear(Long postIdShear) {
+        this.postIdShear = postIdShear;
     }
 
     public Long getId() {
@@ -69,14 +101,6 @@ public class PostEntity {
 
     public void setNotification(String notification) {
         this.notification = notification;
-    }
-
-    public String getImg() {
-        return img;
-    }
-
-    public void setImg(String img) {
-        this.img = img;
     }
 
     public User getUser() {
