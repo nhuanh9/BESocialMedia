@@ -5,9 +5,11 @@ import com.example.media.repository.HastagRepository;
 import com.example.media.repository.HistoryRepository;
 import com.example.media.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class HistoryServiceImpl implements HistoryService {
 
     @Autowired
