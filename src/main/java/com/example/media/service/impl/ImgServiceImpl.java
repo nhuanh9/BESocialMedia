@@ -39,7 +39,7 @@ public class ImgServiceImpl implements IImgService {
 
     @Override
     public Iterable<ImgEntity> findAllByPostId(Long idPost) {
-        return iImgRepo.findAllByPostEntityId(idPost);
+        return null;
     }
 
     @Override

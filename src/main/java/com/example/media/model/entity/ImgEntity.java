@@ -11,6 +11,7 @@ public class ImgEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long postId;
 
     @Column(nullable = false,length = 1000)
     private String linkImg;
@@ -19,18 +20,26 @@ public class ImgEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private PostEntity postEntity;
+//    @ManyToOne
+//    @JoinColumn(name = "post_id")
+//    private PostEntity postEntity;
 
     public ImgEntity() {
     }
 
-    public ImgEntity(Long id, String linkImg, User user, PostEntity postEntity) {
+    public ImgEntity(Long id, Long postId, String linkImg, User user) {
         this.id = id;
+        this.postId = postId;
         this.linkImg = linkImg;
         this.user = user;
-        this.postEntity = postEntity;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 
     public Long getId() {
@@ -57,11 +66,5 @@ public class ImgEntity {
         this.user = user;
     }
 
-    public PostEntity getPostEntity() {
-        return postEntity;
-    }
 
-    public void setPostEntity(PostEntity postEntity) {
-        this.postEntity = postEntity;
-    }
 }

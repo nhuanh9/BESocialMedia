@@ -1,42 +1,23 @@
-package com.example.media.model.entity;
+package com.example.media.model;
 
-import com.example.media.model.User;
+import com.example.media.model.entity.ImgEntity;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "post")
-public class PostEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PostModel {
     private Long id;
-
-    @Column(nullable = false)
     private Date createAt;
-
-    @Column(nullable = false)
     private int status;
-
     private String notification;
-
     private String content;
-
     private Long postIdShear;
-
-    @ManyToOne
-    @JoinColumn(name = "postId")
     private User user;
+    private String imgs;
 
-    @OneToMany(mappedBy = "postId",fetch = FetchType.EAGER)
-    private List<ImgEntity> imgs = new ArrayList<>();
-
-    public PostEntity() {
-    }
-
-    public PostEntity(Long id, Date createAt, int status, String notification, String content, Long postIdShear, User user, List<ImgEntity> imgs) {
+    public PostModel(Long id, Date createAt, int status, String notification, String content, Long postIdShear, User user, String imgs) {
         this.id = id;
         this.createAt = createAt;
         this.status = status;
@@ -45,30 +26,6 @@ public class PostEntity {
         this.postIdShear = postIdShear;
         this.user = user;
         this.imgs = imgs;
-    }
-
-    public List<ImgEntity> getImgs() {
-        return imgs;
-    }
-
-    public void setImgs(List<ImgEntity> imgs) {
-        this.imgs = imgs;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Long getPostIdShear() {
-        return postIdShear;
-    }
-
-    public void setPostIdShear(Long postIdShear) {
-        this.postIdShear = postIdShear;
     }
 
     public Long getId() {
@@ -103,6 +60,22 @@ public class PostEntity {
         this.notification = notification;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Long getPostIdShear() {
+        return postIdShear;
+    }
+
+    public void setPostIdShear(Long postIdShear) {
+        this.postIdShear = postIdShear;
+    }
+
     public User getUser() {
         return user;
     }
@@ -110,4 +83,16 @@ public class PostEntity {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public String getImgs() {
+        return imgs;
+    }
+
+    public void setImgs(String imgs) {
+        this.imgs = imgs;
+    }
+
+    public PostModel() {
+    }
 }
+
