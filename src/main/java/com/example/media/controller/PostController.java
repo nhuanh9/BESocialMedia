@@ -1,7 +1,10 @@
 package com.example.media.controller;
 
+import com.example.media.model.PostModel;
 import com.example.media.model.User;
+import com.example.media.model.entity.ImgEntity;
 import com.example.media.model.entity.PostEntity;
+import com.example.media.service.IImgService;
 import com.example.media.service.PostService;
 import com.example.media.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -25,67 +32,69 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private IImgService iImgService;
+
     String UPLOADED_FOLDER = "/D:/BESocialMedia/src/main/resources/img/";
 
-    @PostMapping("/addPost")
-    public ResponseEntity addPost(@RequestBody PostEntity postEntity, @RequestParam Long idUser,@RequestParam MultipartFile img) {
+    @PostMapping("/addPost/{idUser}")
+    public ResponseEntity addPost(@RequestBody PostModel postModel, @PathVariable Long idUser) {
         User user = (userService.findById(idUser)).isPresent() ?
                 userService.findById(idUser).get() : null;
+        PostEntity postEntity = new PostEntity();
+        Date date = new Date(Calendar.getInstance().getTime().getTime());
 
-        System.out.println("---------------------");
-        System.out.println(img.getOriginalFilename());
-        System.out.println("---------------------");
-
-        if (img.isEmpty()) {
-            System.out.println("nulll");
-        } else {
-            try {
-
-                byte[] bytes = img.getBytes();
-                Path path = Paths.get(UPLOADED_FOLDER + img.getOriginalFilename());
-                Files.write(path, bytes);
-                System.out.println("Upload done");
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
+        postEntity.setCreateAt(date);
         postEntity.setUser(user);
-        postEntity.setImg(img.getOriginalFilename());
+        postEntity.setStatus(postModel.getStatus());
+        postEntity.setContent(postModel.getContent());
+
+        ImgEntity imgEntity = new ImgEntity();
+        imgEntity.setLinkImg(postModel.getImgs());
+        System.out.println("---------------------");
+        System.out.println(postModel.getImgs());
+        System.out.println("---------------------");
+        List<ImgEntity> listImg = new ArrayList<>();
+        listImg.add(imgEntity);
+        postEntity.setImgs(listImg);
+
+        imgEntity.setUser(user);
         postService.savePost(postEntity);
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        List<PostEntity> listPost = (List<PostEntity>) postService.findAll();
+        imgEntity.setPostId(listPost.get(listPost.size()-1).getId());
+        iImgService.save(imgEntity);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/editPost")
-    public ResponseEntity editPost(@RequestBody PostEntity postEntity, @RequestParam Long idUser,@RequestParam MultipartFile img) {
+    public ResponseEntity editPost(@RequestBody PostEntity postEntity, @RequestParam Long idUser) {
         User user = (userService.findById(idUser)).isPresent() ?
                 userService.findById(idUser).get() : null;
 
-        System.out.println("---------------------");
-        System.out.println(img.getOriginalFilename());
-        System.out.println("---------------------");
-
-        if (img.isEmpty()) {
-            System.out.println("nulll");
-        } else {
-            try {
-
-                byte[] bytes = img.getBytes();
-                Path path = Paths.get(UPLOADED_FOLDER + img.getOriginalFilename());
-                Files.write(path, bytes);
-                System.out.println("Upload done");
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        System.out.println("---------------------");
+//        System.out.println(img.getOriginalFilename());
+//        System.out.println("---------------------");
+//
+//        if (img.isEmpty()) {
+//            System.out.println("nulll");
+//        } else {
+//            try {
+//
+//                byte[] bytes = img.getBytes();
+//                Path path = Paths.get(UPLOADED_FOLDER + img.getOriginalFilename());
+//                Files.write(path, bytes);
+//                System.out.println("Upload done");
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         postEntity.setUser(user);
-        postEntity.setImg(img.getOriginalFilename());
         postService.savePost(postEntity);
 
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/allPost")
