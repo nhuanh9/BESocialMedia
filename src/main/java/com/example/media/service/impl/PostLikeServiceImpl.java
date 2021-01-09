@@ -1,5 +1,6 @@
 package com.example.media.service.impl;
 
+import com.example.media.model.UserLikePost;
 import com.example.media.model.entity.PostLike;
 import com.example.media.repository.PostLikeRepository;
 import com.example.media.service.PostLikeService;
@@ -32,5 +33,10 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Override
     public Optional<PostLike> findById(Long id) {
         return likePostRepository.findById(id);
+    }
+
+    @Override
+    public PostLike findByUserIdAndPostEntityId(Long userId, Long postId) {
+        return likePostRepository.findByUserIdAndPostEntityId(userId, postId);
     }
 }

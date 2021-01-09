@@ -1,5 +1,6 @@
 package com.example.media.service;
 
+import com.example.media.model.UserLikePost;
 import com.example.media.model.entity.PostLike;
 
 import java.util.Optional;
@@ -12,4 +13,7 @@ public interface PostLikeService {
     Iterable<PostLike> findAll();
 
     Optional<PostLike> findById(Long id);
+
+    PostLike findByUserIdAndPostEntityId(Long userId, Long postId);
+
 }

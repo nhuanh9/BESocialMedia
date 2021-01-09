@@ -1,6 +1,7 @@
 package com.example.media.model.entity;
 
 import com.example.media.model.User;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "post")
+@Data
 public class PostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +32,8 @@ public class PostEntity {
     @JoinColumn(name = "postId")
     private User user;
 
-    @OneToMany(mappedBy = "postId",fetch = FetchType.EAGER)
+    private Long likes;
+    @OneToMany(mappedBy = "postId", fetch = FetchType.EAGER)
     private List<ImgEntity> imgs = new ArrayList<>();
 
     public PostEntity() {
