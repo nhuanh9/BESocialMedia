@@ -7,6 +7,7 @@ import com.example.media.model.entity.PostLike;
 import com.example.media.service.PostHistoryService;
 import com.example.media.service.PostLikeService;
 import com.example.media.service.PostService;
+import com.example.media.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,9 @@ public class PostLikeController {
 
     @Autowired
     PostService postService;
+
+    @Autowired
+    UserService userService;
 
     private boolean checkLike(User user, PostEntity postEntity, Iterable<PostLike> postLikes) {
         for (PostLike i : postLikes) {
@@ -58,11 +62,11 @@ public class PostLikeController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity add(@RequestBody PostLike postLike) {
-        postLikeService.save(postLike);
-        return new ResponseEntity(HttpStatus.CREATED);
-    }
+//    @PostMapping
+//    public ResponseEntity add(@RequestBody PostLike postLike) {
+//        postLikeService.save(postLike);
+//        return new ResponseEntity(HttpStatus.CREATED);
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity edit(@RequestBody PostLike postLike, @PathVariable Long id) {
@@ -75,25 +79,43 @@ public class PostLikeController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-//    @PostMapping
-//    public ResponseEntity add(@RequestBody PostLike like) {
-//        PostEntity postEntity = like.getPostEntity();
-//        PostLike lastLike = postLikeService.findByUserIdAndPostEntityId(like.getUser().getId(), postEntity.getId());
-//        if (checkLike(like.getUser(), postEntity, postLikeService.findAll())) {
-//            if (lastLike == null) {
-//                like.setPostEntity(postEntity);
-//                like.setLiked(true);
-//                postLikeService.save(like);
-//            } else {
-//                lastLike.setLiked(true);
-//                postLikeService.save(lastLike);
-//            }
-//            Long oldLikes = postEntity.getLikes();
-//            oldLikes = oldLikes == null ? Long.valueOf(0) : oldLikes;
-//            postEntity.setLikes(oldLikes + Long.valueOf(1));
-//            postService.savePost(postEntity);
-//        }
-//        postLikeService.save(like);
-//        return new ResponseEntity(HttpStatus.CREATED);
-//    }
+    @PostMapping
+    public ResponseEntity like(@RequestBody PostLike like) {
+        PostEntity postEntity = postService.findById(like.getPostEntity().getId()).get();
+        User user = userService.findById(like.getUser().getId()).get();
+        PostLike lastLike = postLikeService.findByUserIdAndPostEntityId(user.getId(), postEntity.getId());
+        if (checkLike(user, postEntity, postLikeService.findAll())) {
+            if (lastLike == null) {
+                like.setPostEntity(postEntity);
+                like.setLiked(true);
+                postLikeService.save(like);
+            } else {
+                lastLike.setLiked(true);
+                postLikeService.save(lastLike);
+            }
+            Long oldLikes = postEntity.getLikes();
+            oldLikes = oldLikes == null ? Long.valueOf(0) : oldLikes;
+            postEntity.setLikes(oldLikes + Long.valueOf(1));
+            postService.savePost(postEntity);
+        }
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PostMapping("/unlike")
+    public ResponseEntity unlike(@RequestBody PostLike like) {
+        PostEntity postEntity = postService.findById(like.getPostEntity().getId()).get();
+        User user = userService.findById(like.getUser().getId()).get();
+        PostLike lastLike = postLikeService.findByUserIdAndPostEntityId(user.getId(), postEntity.getId());
+        if (!checkLike(user, postEntity, postLikeService.findAll())) {
+            lastLike.setLiked(false);
+            Long oldLikes = postEntity.getLikes();
+            oldLikes = oldLikes == null ? Long.valueOf(0) : oldLikes;
+            postEntity.setLikes(oldLikes - Long.valueOf(1));
+            postService.savePost(postEntity);
+            postLikeService.save(lastLike);
+        }
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+
 }
