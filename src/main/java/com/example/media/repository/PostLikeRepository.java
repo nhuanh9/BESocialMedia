@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     PostLike findByUserIdAndPostEntityId(Long userId, Long postId);
 
+    Iterable<PostLike> findAllByPostEntityId(Long postId);
+
 }

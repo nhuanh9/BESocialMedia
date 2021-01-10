@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/post-likes")
+@RequestMapping("/post-likes")
 public class PostLikeController {
     @Autowired
     PostLikeService postLikeService;
@@ -49,6 +49,12 @@ public class PostLikeController {
         if (!postLike.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(postLike, HttpStatus.OK);
+    }
+
+    @GetMapping("/{user-id}/{post-id}")
+    public ResponseEntity<PostLike> getByUserIdAndPostId(@PathVariable("user-id") Long userId, @PathVariable("post-id") Long postId) {
+        PostLike postLike = this.postLikeService.findByUserIdAndPostEntityId(userId, postId);
         return new ResponseEntity<>(postLike, HttpStatus.OK);
     }
 

@@ -16,4 +16,6 @@ public interface PostLikeService {
 
     PostLike findByUserIdAndPostEntityId(Long userId, Long postId);
 
+    Iterable<PostLike> findAllByPostEntityId(Long postId);
+
 }

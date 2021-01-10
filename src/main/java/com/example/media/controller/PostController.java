@@ -4,7 +4,9 @@ import com.example.media.model.PostModel;
 import com.example.media.model.User;
 import com.example.media.model.entity.ImgEntity;
 import com.example.media.model.entity.PostEntity;
+import com.example.media.model.entity.PostLike;
 import com.example.media.service.IImgService;
+import com.example.media.service.PostLikeService;
 import com.example.media.service.PostService;
 import com.example.media.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,8 @@ public class PostController {
     @Autowired
     private IImgService iImgService;
 
+    @Autowired
+    private PostLikeService postLikeService;
     String UPLOADED_FOLDER = "/D:/BESocialMedia/src/main/resources/img/";
 
     @PostMapping("/addPost/{idUser}")
@@ -61,7 +65,7 @@ public class PostController {
         imgEntity.setUser(user);
         postService.savePost(postEntity);
         List<PostEntity> listPost = (List<PostEntity>) postService.findAll();
-        imgEntity.setPostId(listPost.get(listPost.size()-1).getId());
+        imgEntity.setPostId(listPost.get(listPost.size() - 1).getId());
         iImgService.save(imgEntity);
 
         return new ResponseEntity(HttpStatus.OK);
@@ -134,5 +138,11 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+    @GetMapping("/posts/{post-id}/post-likes")
+    public ResponseEntity<Iterable<PostLike>> getAllLikesByPostId(@PathVariable("post-id") Long postId) {
+        Iterable<PostLike> postLike = this.postLikeService.findAllByPostEntityId(postId);
+        return new ResponseEntity<>(postLike, HttpStatus.OK);
+    }
 
 }
