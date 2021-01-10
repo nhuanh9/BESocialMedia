@@ -51,9 +51,6 @@ public class PostController {
 
         ImgEntity imgEntity = new ImgEntity();
         imgEntity.setLinkImg(postModel.getImgs());
-        System.out.println("---------------------");
-        System.out.println(postModel.getImgs());
-        System.out.println("---------------------");
         List<ImgEntity> listImg = new ArrayList<>();
         listImg.add(imgEntity);
         postEntity.setImgs(listImg);
@@ -61,45 +58,50 @@ public class PostController {
         imgEntity.setUser(user);
         postService.savePost(postEntity);
         List<PostEntity> listPost = (List<PostEntity>) postService.findAll();
-        imgEntity.setPostId(listPost.get(listPost.size()-1).getId());
+        imgEntity.setPostId(listPost.get(listPost.size() - 1).getId());
         iImgService.save(imgEntity);
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping("/editPost")
-    public ResponseEntity editPost(@RequestBody PostEntity postEntity, @RequestParam Long idUser) {
+    @PostMapping("/editPost/{idUser}")
+    public ResponseEntity editPost(@RequestBody PostModel postModel, @PathVariable Long idUser) {
         User user = (userService.findById(idUser)).isPresent() ?
                 userService.findById(idUser).get() : null;
 
-//        System.out.println("---------------------");
-//        System.out.println(img.getOriginalFilename());
-//        System.out.println("---------------------");
-//
-//        if (img.isEmpty()) {
-//            System.out.println("nulll");
-//        } else {
-//            try {
-//
-//                byte[] bytes = img.getBytes();
-//                Path path = Paths.get(UPLOADED_FOLDER + img.getOriginalFilename());
-//                Files.write(path, bytes);
-//                System.out.println("Upload done");
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        PostEntity postEntity = postService.findById(postModel.getId()).get();
+        postEntity.setStatus(postModel.getStatus());
+        postEntity.setContent(postModel.getContent());
 
-        postEntity.setUser(user);
+        ImgEntity imgEntity = new ImgEntity();
+        imgEntity.setLinkImg(postModel.getImgs());
+        List<ImgEntity> listImg = new ArrayList<>();
+        listImg.add(imgEntity);
+        postEntity.setImgs(listImg);
+
+        imgEntity.setUser(user);
         postService.savePost(postEntity);
 
+        imgEntity.setPostId(postEntity.getId());
+        iImgService.save(imgEntity);
         return new ResponseEntity(HttpStatus.OK);
     }
+    @PostMapping("/editPostAndImg/{idImg}")
+    public ResponseEntity editPostAndImg(@RequestBody PostModel postModel, @PathVariable Long idImg) {
+        PostEntity postEntity = postService.findById(postModel.getId()).get();
+        postEntity.setStatus(postModel.getStatus());
+        postEntity.setContent(postModel.getContent());
 
+        ImgEntity imgEntity = iImgService.findById(idImg).get();
+        imgEntity.setLinkImg(postModel.getImgs());
+
+        postService.savePost(postEntity);
+        iImgService.save(imgEntity);
+        return new ResponseEntity(HttpStatus.OK);
+    }
     @GetMapping("/allPost")
     public ResponseEntity<Iterable<PostEntity>> getAll() {
-        Iterable<PostEntity> listPost = postService.findAll();
+        Iterable<PostEntity> listPost = postService.findAllByStatus(1);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 

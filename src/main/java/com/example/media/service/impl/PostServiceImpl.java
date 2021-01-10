@@ -49,6 +49,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Iterable<PostEntity> findAllByStatus(int status) {
+        return iPostRepository.findAllByStatus(status);
+    }
+
+    @Override
     public Iterable<PostEntity> findAllByUserId(Long idUser) {
         return iPostRepository.findAllByUserId(idUser);
     }
