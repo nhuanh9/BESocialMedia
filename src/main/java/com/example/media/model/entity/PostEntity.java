@@ -36,6 +36,9 @@ public class PostEntity {
     @OneToMany(mappedBy = "postId", fetch = FetchType.EAGER)
     private List<ImgEntity> imgs = new ArrayList<>();
 
+    @OneToMany(targetEntity = CommentForm.class)
+    private List<CommentForm> listComment;
+
     public PostEntity() {
     }
 
