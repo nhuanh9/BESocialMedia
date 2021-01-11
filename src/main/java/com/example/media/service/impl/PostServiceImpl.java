@@ -57,6 +57,10 @@ public class PostServiceImpl implements PostService {
     public Iterable<PostEntity> findAllByUserId(Long idUser) {
         return iPostRepository.findAllByUserId(idUser);
     }
+    @Override
+    public Iterable<PostEntity> findAllByContent(String content, Long id) {
+        return iPostRepository.findByContentContainingAndUserId(content, id);
+    }
 
     @Override
     public Optional<PostEntity> findById(Long id) {

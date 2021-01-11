@@ -21,5 +21,7 @@ public interface PostService {
 
     Iterable<PostEntity> findAllByUserId(Long idUser);
 
+    Iterable<PostEntity> findAllByContent(String content,Long id);
+
     Optional<PostEntity> findById(Long id);
 }

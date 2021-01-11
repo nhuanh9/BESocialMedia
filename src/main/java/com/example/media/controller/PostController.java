@@ -49,19 +49,27 @@ public class PostController {
         postEntity.setStatus(postModel.getStatus());
         postEntity.setContent(postModel.getContent());
 
-        ImgEntity imgEntity = new ImgEntity();
-        imgEntity.setLinkImg(postModel.getImgs());
-        List<ImgEntity> listImg = new ArrayList<>();
-        listImg.add(imgEntity);
-        postEntity.setImgs(listImg);
+        if (postModel.getPostIdShear() != null) {
+            postEntity.setPostIdShear(postModel.getPostIdShear());
+        }
 
-        imgEntity.setUser(user);
-        postService.savePost(postEntity);
-        List<PostEntity> listPost = (List<PostEntity>) postService.findAll();
-        imgEntity.setPostId(listPost.get(listPost.size() - 1).getId());
-        iImgService.save(imgEntity);
+        if (postModel.getImgs() != "") {
+            ImgEntity imgEntity = new ImgEntity();
+            imgEntity.setLinkImg(postModel.getImgs());
+            List<ImgEntity> listImg = new ArrayList<>();
+            listImg.add(imgEntity);
+            postEntity.setImgs(listImg);
 
-        return new ResponseEntity(HttpStatus.OK);
+            imgEntity.setUser(user);
+            postService.savePost(postEntity);
+            List<PostEntity> listPost = (List<PostEntity>) postService.findAll();
+            imgEntity.setPostId(listPost.get(listPost.size() - 1).getId());
+            iImgService.save(imgEntity);
+            return new ResponseEntity(HttpStatus.OK);
+        } else {
+            postService.savePost(postEntity);
+            return new ResponseEntity(HttpStatus.OK);
+        }
     }
 
     @PostMapping("/editPost/{idUser}")
@@ -86,6 +94,7 @@ public class PostController {
         iImgService.save(imgEntity);
         return new ResponseEntity(HttpStatus.OK);
     }
+
     @PostMapping("/editPostAndImg/{idImg}")
     public ResponseEntity editPostAndImg(@RequestBody PostModel postModel, @PathVariable Long idImg) {
         PostEntity postEntity = postService.findById(postModel.getId()).get();
@@ -99,6 +108,7 @@ public class PostController {
         iImgService.save(imgEntity);
         return new ResponseEntity(HttpStatus.OK);
     }
+
     @GetMapping("/allPost")
     public ResponseEntity<Iterable<PostEntity>> getAll() {
         Iterable<PostEntity> listPost = postService.findAllByStatus(1);
@@ -115,6 +125,12 @@ public class PostController {
     public ResponseEntity<PostEntity> findPostById(@PathVariable Long idPost) {
         PostEntity post = postService.findById(idPost).get();
         return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
+    @GetMapping("/findPostByContent/{idUser}/{content}")
+    public ResponseEntity<Iterable<PostEntity>> findPostByContent(@PathVariable String content,@PathVariable Long idUser) {
+        Iterable<PostEntity> listPost = postService.findAllByContent(content,idUser);
+        return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
     @PostMapping("/changStatusTrue/{idPost}")

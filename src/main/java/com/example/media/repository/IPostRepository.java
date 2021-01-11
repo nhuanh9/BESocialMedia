@@ -20,6 +20,8 @@ public interface IPostRepository extends JpaRepository<PostEntity, Long> {
     @Query("UPDATE PostEntity p SET p.status = 0 WHERE p.id =:id")
     void changStatusPostFalse(@Param("id") Long id);
 
+    Iterable<PostEntity> findByContentContainingAndUserId(String content, Long id);
+
     Optional<PostEntity> findById(Long id);
 
     Iterable<PostEntity> findAllByUserId(Long id);
