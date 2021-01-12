@@ -18,4 +18,5 @@ public interface PostLikeService {
 
     Iterable<PostLike> findAllByPostEntityId(Long postId);
 
+    void deleteAllByPostEntityId(Long id);
 }

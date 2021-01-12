@@ -44,4 +44,9 @@ public class PostLikeServiceImpl implements PostLikeService {
     public Iterable<PostLike> findAllByPostEntityId(Long postId) {
         return likePostRepository.findAllByPostEntityId(postId);
     }
+
+    @Override
+    public void deleteAllByPostEntityId(Long id) {
+        likePostRepository.deleteAllByPostEntityId(id);
+    }
 }

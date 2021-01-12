@@ -132,10 +132,11 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/deletePost/{idPost}")
+    @DeleteMapping("/posts/{idPost}")
     public ResponseEntity deletePost(@PathVariable Long idPost) {
         PostEntity postEntity = postService.findById(idPost).get();
         postService.deletePost(postEntity);
+        postLikeService.deleteAllByPostEntityId(idPost);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
