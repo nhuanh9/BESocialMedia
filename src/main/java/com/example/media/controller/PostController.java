@@ -2,11 +2,11 @@ package com.example.media.controller;
 
 import com.example.media.model.PostModel;
 import com.example.media.model.User;
+import com.example.media.model.entity.CommentForm;
 import com.example.media.model.entity.ImgEntity;
 import com.example.media.model.entity.PostEntity;
-import com.example.media.service.IImgService;
-import com.example.media.service.PostService;
-import com.example.media.service.UserService;
+import com.example.media.model.entity.PostLike;
+import com.example.media.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +21,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
@@ -34,7 +35,11 @@ public class PostController {
 
     @Autowired
     private IImgService iImgService;
+    @Autowired
 
+    private CommentService commentService;
+    @Autowired
+    private PostLikeService postLikeService;
     String UPLOADED_FOLDER = "/D:/BESocialMedia/src/main/resources/img/";
 
     @PostMapping("/addPost/{idUser}")
@@ -153,4 +158,22 @@ public class PostController {
     }
 
 
+    @GetMapping("/posts/{post-id}/post-likes")
+    public ResponseEntity<Iterable<PostLike>> getAllLikesByPostId(@PathVariable("post-id") Long postId) {
+        Iterable<PostLike> postLike = this.postLikeService.findAllByPostEntityId(postId);
+        return new ResponseEntity<>(postLike, HttpStatus.OK);
+    }
+
+    @PostMapping("/posts/{id}/comments")
+    public ResponseEntity<Optional<PostEntity>> comment(@PathVariable("id") Long id, @RequestBody CommentForm commentForm) {
+        commentService.save(commentForm);
+        Optional<PostEntity> postEntity = postService.findById(id);
+        if (postEntity.isPresent()) {
+            postEntity.get().getListComment().add(commentForm);
+            postService.savePost(postEntity.get());
+            return new ResponseEntity<>(postEntity, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

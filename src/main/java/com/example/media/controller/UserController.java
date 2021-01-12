@@ -52,11 +52,6 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/users")
-    public ResponseEntity<Iterable<User>> getAll() {
-        Iterable<User> users = userService.findAll();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
 
     @PostMapping("/register")
     public ResponseEntity<User> create(@Valid @RequestBody User user, BindingResult bindingResult) {
@@ -166,6 +161,28 @@ public class UserController {
         String confirmPassword = passwordEncoder.encode(user.getConfirmPassword());
         user.setPassword(newPassword);
         user.setConfirmPassword(confirmPassword);
+        userService.save(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/new-password/{id}")
+    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user) {
+        Optional<User> userOptional = this.userService.findById(id);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        user.setId(userOptional.get().getId());
+        user.setUsername(userOptional.get().getUsername());
+        user.setEmail(userOptional.get().getEmail());
+        user.setEnabled(userOptional.get().isEnabled());
+        user.setRoles(userOptional.get().getRoles());
+        user.setFirstName(userOptional.get().getFirstName());
+        user.setLastName(userOptional.get().getLastName());
+        user.setImageUrls(userOptional.get().getImageUrls());
+        user.setGender(userOptional.get().getGender());
+        user.setPhoneNumber(userOptional.get().getPhoneNumber());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }

@@ -1,6 +1,7 @@
 package com.example.media.service;
 
 import com.example.media.model.User;
+import com.example.media.model.entity.FriendEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -26,4 +27,6 @@ public interface UserService extends UserDetailsService {
     User findByEmail(String email);
 
     boolean isCorrectConfirmPassword(User user);
+
+    void delete(User user);
 }
