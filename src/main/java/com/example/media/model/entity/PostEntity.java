@@ -22,14 +22,13 @@ public class PostEntity {
     @Column(nullable = false)
     private int status;
 
-    private String notification;
 
     private String content;
 
     private Long postIdShear;
 
     @ManyToOne
-    @JoinColumn(name = "postId")
+    @JoinColumn(name = "userId")
     private User user;
 
     private Long likes;
@@ -42,11 +41,10 @@ public class PostEntity {
     public PostEntity() {
     }
 
-    public PostEntity(Long id, Date createAt, int status, String notification, String content, Long postIdShear, User user, List<ImgEntity> imgs) {
+    public PostEntity(Long id, Date createAt, int status,String content, Long postIdShear, User user, List<ImgEntity> imgs) {
         this.id = id;
         this.createAt = createAt;
         this.status = status;
-        this.notification = notification;
         this.content = content;
         this.postIdShear = postIdShear;
         this.user = user;
@@ -99,14 +97,6 @@ public class PostEntity {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public String getNotification() {
-        return notification;
-    }
-
-    public void setNotification(String notification) {
-        this.notification = notification;
     }
 
     public User getUser() {
